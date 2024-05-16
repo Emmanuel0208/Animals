@@ -40,12 +40,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: c5ea51bcdaebe6b47afe0316cf9d1687, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c5ea51bcdaebe6b47afe0316cf9d1687, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c5ea51bcdaebe6b47afe0316cf9d1687, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c5ea51bcdaebe6b47afe0316cf9d1687, type: 3}
       propertyPath: m_LocalPosition.x
       value: 133.23714
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c5ea51bcdaebe6b47afe0316cf9d1687, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -22.280853
+      value: -24
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c5ea51bcdaebe6b47afe0316cf9d1687, type: 3}
       propertyPath: m_LocalPosition.z
@@ -172,6 +184,12 @@ MonoBehaviour:
   etiquetaObjetivo: Shrimp
   vidaMaxima: 0
   tiempoDeVida: 0
+  vidaActual: 0
+  segundosRestantesDeVida: 0
+  puedeReproducirse: 0
+  nuevoHijoPrefab: {fileID: 926873563970499218}
+  limiteMinimo: {x: -304, y: -24.513306, z: -326}
+  limiteMaximo: {x: 224, y: -24, z: 202.86313}
 --- !u!54 &6557835586258679199
 Rigidbody:
   m_ObjectHideFlags: 0

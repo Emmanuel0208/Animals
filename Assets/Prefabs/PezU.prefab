@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 140.57137
       objectReference: {fileID: 0}
@@ -78,6 +90,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 175063156860111063}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2073231583242739142}
   m_SourcePrefab: {fileID: 100100000, guid: 4ebcade470ef67245b0df8f77bfae81e, type: 3}
 --- !u!1 &6119137494933542739 stripped
 GameObject:
@@ -132,3 +147,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-2073231583242739142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6119137494933542739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4642e7034a4e524e9ef1d9e255ee981, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocidadMaxima: 0
+  cambioDeDireccionIntervalo: 2
+  distanciaDeColision: 2
+  etiquetaObjetivo: Shrimp
+  vidaMaxima: 0
+  tiempoDeVida: 0
+  vidaActual: 0
+  segundosRestantesDeVida: 0
+  puedeReproducirse: 0
+  nuevoHijoPrefab: {fileID: 6119137494933542739}
+  limiteMinimo: {x: -304, y: -24.513306, z: -326}
+  limiteMaximo: {x: 224, y: -24, z: 202.86313}

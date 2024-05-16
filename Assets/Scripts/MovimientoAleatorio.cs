@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class MovimientoAleatorio : MonoBehaviour
 {
@@ -10,14 +10,20 @@ public class MovimientoAleatorio : MonoBehaviour
     [SerializeField] private string etiquetaObjetivo = "Shrimp";
 
     [Header("Valores Aleatorios")]
-    [SerializeField] private int vidaMaxima;
+    [SerializeField] private float vidaMaxima;
     [SerializeField] private float tiempoDeVida;
 
     [Header("Información Adicional")]
-    [SerializeField] private int vidaActual;
+    [SerializeField] private float vidaActual;
     [SerializeField] private float segundosRestantesDeVida;
+    [SerializeField] private bool puedeReproducirse = false;
+    [SerializeField] private GameObject nuevoHijoPrefab; // Variable para el prefab del nuevo hijo
+
+    [SerializeField] private Vector3 limiteMinimo;
+    [SerializeField] private Vector3 limiteMaximo;
 
     private float contadorCambioDireccion;
+    private float tiempoDesdeUltimaReproduccion; // Variable para rastrear el tiempo desde la última reproducción
     private Rigidbody rb;
     private Vector3 objetivoPosicion; // Posición objetivo hacia la que se dirigirá el objeto
 
@@ -25,10 +31,11 @@ public class MovimientoAleatorio : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         contadorCambioDireccion = 0f;
+        tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(2f, 51f);
-        velocidadMaxima = Random.Range(2f, 51f);
+        tiempoDeVida = Random.Range(100f, 150f);
+        velocidadMaxima = Random.Range(20f, 35f);
         segundosRestantesDeVida = tiempoDeVida;
 
         InvokeRepeating("CambiarDireccion", 0f, cambioDeDireccionIntervalo);
@@ -41,7 +48,16 @@ public class MovimientoAleatorio : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida <= 15 && segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida > 100)
+            {
+                if (tiempoDesdeUltimaReproduccion >= 10f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                {
+                    Reproducirse();
+                    tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
+                }
+            }
+
+            if (segundosRestantesDeVida <= 100 && segundosRestantesDeVida > 0)
             {
                 // Cambia el objetivo a la posición de un objeto "Shrimp"
                 CambiarObjetivoAShrimp();
@@ -59,6 +75,7 @@ public class MovimientoAleatorio : MonoBehaviour
                 }
             }
 
+            tiempoDesdeUltimaReproduccion += Time.deltaTime; // Incrementa el tiempo desde la última reproducción
             yield return null;
         }
 
@@ -74,6 +91,12 @@ public class MovimientoAleatorio : MonoBehaviour
             CambiarDireccion();
             contadorCambioDireccion = 0f;
         }
+
+        // Verifica y ajusta la posición dentro de los límites
+        Vector3 nuevaPosicion = transform.position + (transform.forward * velocidadMaxima * Time.deltaTime);
+        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, limiteMinimo.x, limiteMaximo.x);
+        nuevaPosicion.z = Mathf.Clamp(nuevaPosicion.z, limiteMinimo.z, limiteMaximo.z);
+        transform.position = nuevaPosicion;
     }
 
     void FixedUpdate()
@@ -147,7 +170,6 @@ public class MovimientoAleatorio : MonoBehaviour
         }
     }
 
-
     void CambiarObjetivoAShrimp()
     {
         GameObject[] shrimps = GameObject.FindGameObjectsWithTag(etiquetaObjetivo);
@@ -174,5 +196,72 @@ public class MovimientoAleatorio : MonoBehaviour
     {
         Quaternion nuevaRotacion = Quaternion.Euler(0f, Random.Range(-90f, 90f), 0f);
         transform.rotation *= nuevaRotacion;
+    }
+
+    void Reproducirse()
+    {
+        // Verificar si el objeto puede reproducirse
+        if (!puedeReproducirse)
+        {
+            return; // No se puede reproducir si no puedeReproducirse es false
+        }
+
+        // Busca a otro objeto con la etiqueta "Whale" que también esté buscando reproducirse
+        GameObject[] whales = GameObject.FindGameObjectsWithTag("Whale");
+        GameObject pareja = null;
+
+        foreach (GameObject whale in whales)
+        {
+            MovimientoAleatorio movimientoWhale = whale.GetComponent<MovimientoAleatorio>();
+            if (movimientoWhale != null && movimientoWhale.puedeReproducirse)
+            {
+                // Si encuentra una pareja potencial, sal de la búsqueda
+                pareja = whale;
+                break;
+            }
+        }
+
+        // Si encontró una pareja, instancie al nuevo hijo
+        if (pareja != null)
+        {
+            // Calcula la posición del nuevo hijo
+            Vector3 posicionNueva = (transform.position + pareja.transform.position) / 2f;
+
+            // Instancia al nuevo hijo
+            GameObject nuevoHijo = Instantiate(nuevoHijoPrefab, posicionNueva, Quaternion.identity);
+
+            // Obtén el componente MovimientoAleatorio del nuevo hijo
+            MovimientoAleatorio movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoAleatorio>();
+
+            // Heredar características de los padres y aplicar mutación
+            movimientoNuevoHijo.velocidadMaxima = Random.Range(Mathf.Min(velocidadMaxima, pareja.GetComponent<MovimientoAleatorio>().velocidadMaxima),
+                                                                Mathf.Max(velocidadMaxima, pareja.GetComponent<MovimientoAleatorio>().velocidadMaxima));
+            movimientoNuevoHijo.tiempoDeVida = Random.Range(Mathf.Min(tiempoDeVida, pareja.GetComponent<MovimientoAleatorio>().tiempoDeVida),
+                                                              Mathf.Max(tiempoDeVida, pareja.GetComponent<MovimientoAleatorio>().tiempoDeVida));
+            movimientoNuevoHijo.vidaMaxima = Random.Range(Mathf.Min(vidaMaxima, pareja.GetComponent<MovimientoAleatorio>().vidaMaxima),
+                                                           Mathf.Max(vidaMaxima, pareja.GetComponent<MovimientoAleatorio>().vidaMaxima));
+
+            // Aplicar mutación a una característica aleatoria
+            switch (Random.Range(0, 3))
+            {
+                case 0:
+                    movimientoNuevoHijo.velocidadMaxima *= Random.Range(0.8f, 1.2f);
+                    break;
+                case 1:
+                    movimientoNuevoHijo.tiempoDeVida *= Random.Range(0.8f, 1.2f);
+                    break;
+                case 2:
+                    movimientoNuevoHijo.vidaMaxima *= Random.Range(0.8f, 1.2f);
+                    break;
+            }
+
+            // Desactiva la capacidad de reproducción de ambos padres para evitar más reproducciones
+            puedeReproducirse = false;
+            MovimientoAleatorio movimientoPareja = pareja.GetComponent<MovimientoAleatorio>();
+            movimientoPareja.puedeReproducirse = false;
+
+            // Mensaje de depuración
+            Debug.Log("Reproducción exitosa entre " + gameObject.name + " y " + pareja.name + ". Nuevo hijo creado con características heredadas y mutación.");
+        }
     }
 }

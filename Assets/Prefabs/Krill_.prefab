@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: aea15d4ec151759488ac915278af32ab, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aea15d4ec151759488ac915278af32ab, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aea15d4ec151759488ac915278af32ab, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aea15d4ec151759488ac915278af32ab, type: 3}
       propertyPath: m_LocalPosition.x
       value: 135.85362
       objectReference: {fileID: 0}
@@ -78,6 +90,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aea15d4ec151759488ac915278af32ab, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 4960986490370845219}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aea15d4ec151759488ac915278af32ab, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8898267052417099488}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aea15d4ec151759488ac915278af32ab, type: 3}
       insertIndex: -1
@@ -88,6 +103,30 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: aea15d4ec151759488ac915278af32ab, type: 3}
   m_PrefabInstance: {fileID: 4720753314480446042}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4960986490370845219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5567036215721977611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7baf2227a306e52489ef0b71bfa780b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocidadMaxima: 0
+  cambioDeDireccionIntervalo: 2
+  distanciaDeColision: 2
+  etiquetaObjetivo: Algae
+  vidaMaxima: 0
+  tiempoDeVida: 0
+  vidaActual: 0
+  segundosRestantesDeVida: 0
+  puedeReproducirse: 0
+  nuevoHijoPrefab: {fileID: 5567036215721977611}
+  limiteMinimo: {x: -304, y: -24.513306, z: -326}
+  limiteMaximo: {x: 224, y: -24, z: 202.86313}
 --- !u!65 &8898267052417099488
 BoxCollider:
   m_ObjectHideFlags: 0
