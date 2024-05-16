@@ -3,12 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Whale
+  - Seal
+  - Orca
+  - Shrimp
+  - Algae
+  - Fish
+  - Shark
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Animal
   - Water
   - UI
   - 
