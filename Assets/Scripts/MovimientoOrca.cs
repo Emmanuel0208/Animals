@@ -34,7 +34,7 @@ public class MovimientoOrca : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(100f, 150f);
+        tiempoDeVida = Random.Range(60, 80);
         velocidadMaxima = Random.Range(20f, 35f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -48,7 +48,7 @@ public class MovimientoOrca : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida > 100)
+            if (segundosRestantesDeVida > 65)
             {
                 if (tiempoDesdeUltimaReproduccion >= 10f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
@@ -57,17 +57,22 @@ public class MovimientoOrca : MonoBehaviour
                 }
             }
 
-            // Comprueba si hay segundos restantes de vida y si es así, actúa en consecuencia
-            if (segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida <= 60 && segundosRestantesDeVida > 0)
             {
-                if (segundosRestantesDeVida <= 100)
+                // Cambia el objetivo a la posición de un objeto con etiqueta objetivo
+                CambiarObjetivoAleatorio();
+            }
+            else if (segundosRestantesDeVida > 0)
+            {
+                if (segundosRestantesDeVida < 60)
                 {
-                    // Cambia el objetivo a la posición de uno de los objetos objetivo
-                    CambiarObjetivoAleatorio();
+                    Debug.Log("Comenzando a buscar objetivos...");
+                    BuscarObjetivo();
                 }
-
-                // Realiza el movimiento aleatorio o hacia el objetivo
-                Mover();
+                else
+                {
+                    MoverAleatoriamente();
+                }
             }
 
             tiempoDesdeUltimaReproduccion += Time.deltaTime; // Incrementa el tiempo desde la última reproducción
@@ -77,7 +82,7 @@ public class MovimientoOrca : MonoBehaviour
         DestruirObjeto();
     }
 
-    void Mover()
+    void MoverAleatoriamente()
     {
         // Realiza el movimiento aleatorio cambiando la dirección del objeto
         contadorCambioDireccion += Time.deltaTime;
@@ -87,12 +92,16 @@ public class MovimientoOrca : MonoBehaviour
             contadorCambioDireccion = 0f;
         }
 
+        
+
         // Verifica y ajusta la posición dentro de los límites
         Vector3 nuevaPosicion = transform.position + (transform.forward * velocidadMaxima * Time.deltaTime);
         nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, limiteMinimo.x, limiteMaximo.x);
         nuevaPosicion.z = Mathf.Clamp(nuevaPosicion.z, limiteMinimo.z, limiteMaximo.z);
         transform.position = nuevaPosicion;
     }
+
+    
 
     void FixedUpdate()
     {
@@ -126,11 +135,25 @@ public class MovimientoOrca : MonoBehaviour
             {
                 MovimientoOrca orcaScript = other.GetComponent<MovimientoOrca>();
                 vidaActual += Random.Range(5, 11);
-                segundosRestantesDeVida += Random.Range(5f, 11f);
+                segundosRestantesDeVida += Random.Range(15f, 20f);
                 Destroy(other.gameObject);
                 break;
             }
         }
+    }
+
+    void BuscarObjetivo()
+    {
+        GameObject[] objetivos = GameObject.FindGameObjectsWithTag(etiquetasObjetivo[Random.Range(0, etiquetasObjetivo.Length)]);
+
+        if (objetivos.Length == 0)
+        {
+            Debug.Log("No se encontraron objetivos.");
+            return;
+        }
+
+        GameObject objetivoAleatorio = objetivos[Random.Range(0, objetivos.Length)];
+        objetivoPosicion = objetivoAleatorio.transform.position;
     }
 
     void CambiarObjetivoAleatorio()

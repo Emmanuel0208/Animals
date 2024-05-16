@@ -34,7 +34,7 @@ public class MovimientoFoca : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(35f, 60f);
+        tiempoDeVida = Random.Range(50f, 70f);
         velocidadMaxima = Random.Range(20f, 40f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -48,23 +48,23 @@ public class MovimientoFoca : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida > 45)
+            if (segundosRestantesDeVida > 55)
             {
-                if (tiempoDesdeUltimaReproduccion >= 5f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 6f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 25 && segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida <= 45 && segundosRestantesDeVida > 0)
             {
                 // Cambia el objetivo a la posición de un objeto "Fish"
                 CambiarObjetivoAFish();
             }
             else if (segundosRestantesDeVida > 0)
             {
-                if (segundosRestantesDeVida < 25)
+                if (segundosRestantesDeVida < 45)
                 {
                     Debug.Log("Comenzando a buscar fish...");
                     BuscarFish();
@@ -129,7 +129,7 @@ public class MovimientoFoca : MonoBehaviour
         {
             MovimientoFoca fishScript = other.GetComponent<MovimientoFoca>();
             vidaActual += Random.Range(5, 11);
-            segundosRestantesDeVida += Random.Range(9f, 11f);
+            segundosRestantesDeVida += Random.Range(20f, 25f);
             Destroy(other.gameObject);
         }
     }

@@ -34,7 +34,7 @@ public class MovimientoAleatorio : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(100f, 150f);
+        tiempoDeVida = Random.Range(60f, 80f);
         velocidadMaxima = Random.Range(20f, 35f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -48,23 +48,23 @@ public class MovimientoAleatorio : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida > 100)
+            if (segundosRestantesDeVida > 65)
             {
-                if (tiempoDesdeUltimaReproduccion >= 10f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 8f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 100 && segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida <= 60 && segundosRestantesDeVida > 0)
             {
                 // Cambia el objetivo a la posición de un objeto "Shrimp"
                 CambiarObjetivoAShrimp();
             }
             else if (segundosRestantesDeVida > 0)
             {
-                if (segundosRestantesDeVida < 30)
+                if (segundosRestantesDeVida < 60)
                 {
                     Debug.Log("Comenzando a buscar shrimp...");
                     BuscarShrimp();
@@ -129,7 +129,7 @@ public class MovimientoAleatorio : MonoBehaviour
         {
             MovimientoAleatorio shrimpScript = other.GetComponent<MovimientoAleatorio>();
             vidaActual += Random.Range(5, 11);
-            segundosRestantesDeVida += Random.Range(5f, 11f);
+            segundosRestantesDeVida += Random.Range(15f, 20f);
             Destroy(other.gameObject);
         }
     }

@@ -34,7 +34,7 @@ public class MovimientoCamaron : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f;
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(50f, 80);
+        tiempoDeVida = Random.Range(30f, 50f);
         velocidadMaxima = Random.Range(2f, 20f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -48,23 +48,23 @@ public class MovimientoCamaron : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida > 60)
+            if (segundosRestantesDeVida > 35)
             {
-                if (tiempoDesdeUltimaReproduccion >= 6f)
+                if (tiempoDesdeUltimaReproduccion >= 2f)
                 {
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f;
                 }
             }
 
-            if (segundosRestantesDeVida <= 50 && segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida <= 30 && segundosRestantesDeVida > 0)
             {
                 // Cambia el objetivo a la posición de un objeto "Algae"
                 CambiarObjetivoAAlgae();
             }
             else if (segundosRestantesDeVida > 0)
             {
-                if (segundosRestantesDeVida < 50)
+                if (segundosRestantesDeVida < 30)
                 {
                     Debug.Log("Comenzando a buscar Algae...");
                     BuscarAlgae();
@@ -125,7 +125,7 @@ public class MovimientoCamaron : MonoBehaviour
         {
             MovimientoCamaron algaeScript = other.GetComponent<MovimientoCamaron>(); // Cambiado a "MovimientoCamaron"
             vidaActual += Random.Range(5, 11);
-            segundosRestantesDeVida += Random.Range(20f, 25f);
+            segundosRestantesDeVida += Random.Range(30f, 35f);
             Destroy(other.gameObject);
         }
     }

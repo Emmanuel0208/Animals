@@ -33,7 +33,7 @@ public class MovimientoPez : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(30, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(30f, 60f);
+        tiempoDeVida = Random.Range(40f, 60f);
         velocidadMaxima = Random.Range(20f, 40f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -47,23 +47,23 @@ public class MovimientoPez : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida > 35)
+            if (segundosRestantesDeVida > 45)
             {
-                if (tiempoDesdeUltimaReproduccion >= 7f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 4f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 20 && segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida <= 40 && segundosRestantesDeVida > 0)
             {
                 // Cambia el objetivo a la posición de un objeto "Shrimp"
                 CambiarObjetivoAShrimp();
             }
             else if (segundosRestantesDeVida > 0)
             {
-                if (segundosRestantesDeVida < 20)
+                if (segundosRestantesDeVida < 40)
                 {
                     Debug.Log("Comenzando a buscar shrimp...");
                     BuscarShrimp();
@@ -128,7 +128,7 @@ public class MovimientoPez : MonoBehaviour
         {
             MovimientoPez shrimpScript = other.GetComponent<MovimientoPez>();
             vidaActual += Random.Range(5, 11);
-            segundosRestantesDeVida += Random.Range(5f, 11f);
+            segundosRestantesDeVida += Random.Range(25f, 30f);
             Destroy(other.gameObject);
         }
     }

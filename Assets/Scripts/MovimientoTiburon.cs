@@ -34,7 +34,7 @@ public class MovimientoTiburon : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(100f, 150f);
+        tiempoDeVida = Random.Range(60f, 80f);
         velocidadMaxima = Random.Range(20f, 35f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -48,7 +48,7 @@ public class MovimientoTiburon : MonoBehaviour
         {
             segundosRestantesDeVida -= Time.deltaTime;
 
-            if (segundosRestantesDeVida > 100)
+            if (segundosRestantesDeVida > 60)
             {
                 if (tiempoDesdeUltimaReproduccion >= 10f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
@@ -57,17 +57,22 @@ public class MovimientoTiburon : MonoBehaviour
                 }
             }
 
-            // Comprueba si hay segundos restantes de vida y si es así, actúa en consecuencia
-            if (segundosRestantesDeVida > 0)
+            if (segundosRestantesDeVida <= 60 && segundosRestantesDeVida > 0)
             {
-                if (segundosRestantesDeVida <= 100)
+                // Cambia el objetivo a la posición de un objeto con etiqueta objetivo
+                CambiarObjetivoAleatorio();
+            }
+            else if (segundosRestantesDeVida > 0)
+            {
+                if (segundosRestantesDeVida < 60)
                 {
-                    // Cambia el objetivo a la posición de uno de los objetos objetivo
-                    CambiarObjetivoAleatorio();
+                    Debug.Log("Comenzando a buscar objetivos...");
+                    BuscarObjetivo();
                 }
-
-                // Realiza el movimiento aleatorio o hacia el objetivo
-                Mover();
+                else
+                {
+                    MoverAleatoriamente();
+                }
             }
 
             tiempoDesdeUltimaReproduccion += Time.deltaTime; // Incrementa el tiempo desde la última reproducción
@@ -77,7 +82,7 @@ public class MovimientoTiburon : MonoBehaviour
         DestruirObjeto();
     }
 
-    void Mover()
+    void MoverAleatoriamente()
     {
         // Realiza el movimiento aleatorio cambiando la dirección del objeto
         contadorCambioDireccion += Time.deltaTime;
@@ -124,13 +129,30 @@ public class MovimientoTiburon : MonoBehaviour
         {
             if (other.CompareTag(etiquetaObjetivo))
             {
-                MovimientoTiburon whaleScript = other.GetComponent<MovimientoTiburon>();
+                MovimientoOrca orcaScript = other.GetComponent<MovimientoOrca>();
                 vidaActual += Random.Range(5, 11);
-                segundosRestantesDeVida += Random.Range(5f, 11f);
+                segundosRestantesDeVida += Random.Range(15f, 20f);
                 Destroy(other.gameObject);
                 break;
             }
         }
+    }
+
+    void BuscarObjetivo()
+    {
+        GameObject[] objetivos = GameObject.FindGameObjectsWithTag(etiquetasObjetivo[Random.Range(0, etiquetasObjetivo.Length)]);
+
+        if (objetivos.Length == 0)
+        {
+            Debug.Log("No se encontraron objetivos.");
+            // Si no se encontraron objetivos, reanuda el movimiento aleatorio
+            objetivoPosicion = Vector3.zero;
+            MoverAleatoriamente();
+            return;
+        }
+
+        GameObject objetivoAleatorio = objetivos[Random.Range(0, objetivos.Length)];
+        objetivoPosicion = objetivoAleatorio.transform.position;
     }
 
     void CambiarObjetivoAleatorio()
@@ -169,17 +191,17 @@ public class MovimientoTiburon : MonoBehaviour
             return; // No se puede reproducir si puedeReproducirse es false
         }
 
-        // Busca a otro objeto con la etiqueta "Shark" que también esté buscando reproducirse
-        GameObject[] sharks = GameObject.FindGameObjectsWithTag("Shark");
+        // Busca a otro objeto con alguna de las etiquetas de objetivo que también esté buscando reproducirse
+        GameObject[] objetos = GameObject.FindGameObjectsWithTag(etiquetasObjetivo[Random.Range(0, etiquetasObjetivo.Length)]);
         GameObject pareja = null;
 
-        foreach (GameObject shark in sharks)
+        foreach (GameObject obj in objetos)
         {
-            MovimientoTiburon movimientoShark = shark.GetComponent<MovimientoTiburon>();
-            if (movimientoShark != null && movimientoShark.puedeReproducirse)
+            MovimientoTiburon movimientoObj = obj.GetComponent<MovimientoTiburon>();
+            if (movimientoObj != null && movimientoObj.puedeReproducirse)
             {
                 // Si encuentra una pareja potencial, sal de la búsqueda
-                pareja = shark;
+                pareja = obj;
                 break;
             }
         }
