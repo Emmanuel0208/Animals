@@ -43,6 +43,7 @@ public class MovimientoPez : MonoBehaviour
 
     IEnumerator ContadorTiempoVida()
     {
+
         while (segundosRestantesDeVida > 0)
         {
             segundosRestantesDeVida -= Time.deltaTime;

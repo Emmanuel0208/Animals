@@ -44,6 +44,7 @@ public class MovimientoOrca : MonoBehaviour
 
     IEnumerator ContadorTiempoVida()
     {
+
         while (segundosRestantesDeVida > 0)
         {
             segundosRestantesDeVida -= Time.deltaTime;
@@ -68,6 +69,7 @@ public class MovimientoOrca : MonoBehaviour
                 {
                     Debug.Log("Comenzando a buscar objetivos...");
                     BuscarObjetivo();
+                    yield return new WaitForSeconds(5f); // Espera 5 segundos antes de buscar objetivo nuevamente
                 }
                 else
                 {

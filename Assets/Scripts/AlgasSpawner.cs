@@ -13,7 +13,7 @@ public class AlgaeSpawner : MonoBehaviour
 
     void SpawnAlgae()
     {
-        for (int i = 0; i < 4; i++) // Spawnear 5 algas en cada invocación
+        for (int i = 0; i < 10; i++) // Spawnear 5 algas en cada invocación
         {
             // Calcular una posición aleatoria dentro del área de spawneo
             Vector3 spawnPosition = new Vector3(

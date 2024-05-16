@@ -44,6 +44,7 @@ public class MovimientoFoca : MonoBehaviour
 
     IEnumerator ContadorTiempoVida()
     {
+
         while (segundosRestantesDeVida > 0)
         {
             segundosRestantesDeVida -= Time.deltaTime;
