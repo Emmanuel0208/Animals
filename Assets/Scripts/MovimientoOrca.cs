@@ -17,21 +17,21 @@ public class MovimientoOrca : MonoBehaviour
     [SerializeField] private float vidaActual;
     [SerializeField] private float segundosRestantesDeVida;
     [SerializeField] private bool puedeReproducirse = false;
-    [SerializeField] private GameObject nuevoHijoPrefab; // Variable para el prefab del nuevo hijo
+    [SerializeField] private GameObject nuevoHijoPrefab; //prefab del nuevo hijo
 
     [SerializeField] private Vector3 limiteMinimo;
     [SerializeField] private Vector3 limiteMaximo;
 
     private float contadorCambioDireccion;
-    private float tiempoDesdeUltimaReproduccion; // Variable para rastrear el tiempo desde la última reproducción
+    private float tiempoDesdeUltimaReproduccion; //tiempo desde la última reproducción
     private Rigidbody rb;
-    private Vector3 objetivoPosicion; // Posición objetivo hacia la que se dirigirá el objeto
+    private Vector3 objetivoPosicion; // Posición objetivo hacia la que se dirigirá
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         contadorCambioDireccion = 0f;
-        tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
+        tiempoDesdeUltimaReproduccion = 0f; //Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
         tiempoDeVida = Random.Range(60, 80);
@@ -51,11 +51,11 @@ public class MovimientoOrca : MonoBehaviour
 
             if (segundosRestantesDeVida > 65)
             {
-                if (tiempoDesdeUltimaReproduccion >= 15f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 15f) //última reproducción
                 {
                     puedeReproducirse = true;
                     Reproducirse();
-                    tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
+                    tiempoDesdeUltimaReproduccion = 0f; //Reinicia el tiempo desde la última reproducción
                 }
             }
 
@@ -65,7 +65,7 @@ public class MovimientoOrca : MonoBehaviour
                 {
                     Debug.Log("Comenzando a buscar objetivos...");
                     BuscarObjetivo();
-                    yield return new WaitForSeconds(5f); // Espera 5 segundos antes de buscar objetivo nuevamente
+                    yield return new WaitForSeconds(5f); //Espera 5 segundos antes de buscar objetivo nuevamente
                 }
                 else
                 {
@@ -73,7 +73,7 @@ public class MovimientoOrca : MonoBehaviour
                 }
             }
 
-            tiempoDesdeUltimaReproduccion += Time.deltaTime; // Incrementa el tiempo desde la última reproducción
+            tiempoDesdeUltimaReproduccion += Time.deltaTime; //Incrementa el tiempo desde la última reproducción
             yield return null;
         }
 
@@ -103,38 +103,38 @@ public class MovimientoOrca : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Si hay un objetivo, mueve gradualmente hacia él
+        //mueve gradualmente hacia él objetivo
         if (objetivoPosicion != Vector3.zero)
         {
             MoverHaciaObjetivo();
         }
         else
         {
-            // Si no hay un objetivo, mueve aleatoriamente
+            //Si no hay un objetivo, mueve aleatoriamente
             rb.velocity = transform.forward * velocidadMaxima;
         }
     }
 
-    // Método para destruir la orca
+    //Método para destruir la orca
     void DestruirObjeto()
     {
         Destroy(gameObject);
     }
 
-    // Método para recibir daño
+    //Método para recibir daño
     public void RecibirDaño(int cantidad)
     {
         vidaActual -= cantidad;
     }
 
-    // Método llamado cuando se produce una colisión
+    //Método llamado cuando se produce una colisión
     void OnTriggerEnter(Collider other)
     {
         foreach (string etiquetaObjetivo in etiquetasObjetivo)
         {
             if (other.CompareTag(etiquetaObjetivo))
             {
-                // Aumenta la vida actual y el tiempo restante de vida, y destruye el objetivo
+                //Aumenta la vida actual y el tiempo restante de vida, y destruye el objetivo
                 vidaActual += Random.Range(5, 11);
                 segundosRestantesDeVida += Random.Range(15f, 20f);
                 Destroy(other.gameObject);
@@ -143,7 +143,7 @@ public class MovimientoOrca : MonoBehaviour
         }
     }
 
-    // Método para buscar un objetivo entre los objetos con etiquetas objetivo
+    // Método para buscar un objetivo
     void BuscarObjetivo()
     {
         GameObject[] objetivos = GameObject.FindGameObjectsWithTag(etiquetasObjetivo[Random.Range(0, etiquetasObjetivo.Length)]);
@@ -158,12 +158,12 @@ public class MovimientoOrca : MonoBehaviour
         objetivoPosicion = objetivoAleatorio.transform.position;
     }
 
-    // Método para mover hacia el objetivo
+    //Método para mover hacia el objetivo
     void MoverHaciaObjetivo()
     {
         // Calcula la dirección hacia el objetivo
         Vector3 direccion = (objetivoPosicion - transform.position).normalized;
-        // Mueve el objeto hacia el objetivo con velocidad gradual
+        //Mueve el objeto hacia el objetivo
         rb.velocity = direccion * Mathf.Min(velocidadMaxima, Vector3.Distance(transform.position, objetivoPosicion));
     }
 
