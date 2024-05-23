@@ -51,18 +51,15 @@ public class MovimientoFoca : MonoBehaviour
 
             if (segundosRestantesDeVida > 55)
             {
-                if (tiempoDesdeUltimaReproduccion >= 6f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 7f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
+                    puedeReproducirse = true;
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 45 && segundosRestantesDeVida > 0)
-            {
-                // Cambia el objetivo a la posición de un objeto "Fish"
-                CambiarObjetivoAFish();
-            }
+            
             else if (segundosRestantesDeVida > 0)
             {
                 if (segundosRestantesDeVida < 45)
@@ -128,7 +125,7 @@ public class MovimientoFoca : MonoBehaviour
     {
         if (other.CompareTag(etiquetaObjetivo))
         {
-            MovimientoFoca fishScript = other.GetComponent<MovimientoFoca>();
+            
             vidaActual += Random.Range(5, 11);
             segundosRestantesDeVida += Random.Range(20f, 25f);
             Destroy(other.gameObject);
@@ -171,19 +168,7 @@ public class MovimientoFoca : MonoBehaviour
         }
     }
 
-    void CambiarObjetivoAFish()
-    {
-        GameObject[] fishes = GameObject.FindGameObjectsWithTag(etiquetaObjetivo);
-
-        if (fishes.Length == 0)
-        {
-            Debug.Log("No se encontraron fish.");
-            return;
-        }
-
-        GameObject fishAleatorio = fishes[Random.Range(0, fishes.Length)];
-        objetivoPosicion = fishAleatorio.transform.position;
-    }
+    
 
     void MoverHaciaObjetivo()
     {
@@ -222,7 +207,6 @@ public class MovimientoFoca : MonoBehaviour
             }
         }
 
-        // Si encontró una pareja, instancie al nuevo hijo
         if (pareja != null)
         {
             // Calcula la posición del nuevo hijo
@@ -234,27 +218,29 @@ public class MovimientoFoca : MonoBehaviour
             // Obtén el componente MovimientoFoca del nuevo hijo
             MovimientoFoca movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoFoca>();
 
-            // Heredar características de los padres y aplicar mutación
-            movimientoNuevoHijo.velocidadMaxima = Random.Range(Mathf.Min(velocidadMaxima, pareja.GetComponent<MovimientoFoca>().velocidadMaxima),
-                                                                Mathf.Max(velocidadMaxima, pareja.GetComponent<MovimientoFoca>().velocidadMaxima));
-            movimientoNuevoHijo.tiempoDeVida = Random.Range(Mathf.Min(tiempoDeVida, pareja.GetComponent<MovimientoFoca>().tiempoDeVida),
-                                                              Mathf.Max(tiempoDeVida, pareja.GetComponent<MovimientoFoca>().tiempoDeVida));
-            movimientoNuevoHijo.vidaMaxima = Random.Range(Mathf.Min(vidaMaxima, pareja.GetComponent<MovimientoFoca>().vidaMaxima),
-                                                           Mathf.Max(vidaMaxima, pareja.GetComponent<MovimientoFoca>().vidaMaxima));
+            // Heredar características de los padres
+            float velocidadHijo = (velocidadMaxima + pareja.GetComponent<MovimientoFoca>().velocidadMaxima) / 2f;
+            float tiempoHijo = (tiempoDeVida + pareja.GetComponent<MovimientoFoca>().tiempoDeVida) / 2f;
+            float vidaHijo = (vidaMaxima + pareja.GetComponent<MovimientoFoca>().vidaMaxima) / 2f;
 
             // Aplicar mutación a una característica aleatoria
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    movimientoNuevoHijo.velocidadMaxima *= Random.Range(0.8f, 1.2f);
+                    velocidadHijo *= Random.Range(0.8f, 1.2f);
                     break;
                 case 1:
-                    movimientoNuevoHijo.tiempoDeVida *= Random.Range(0.8f, 1.2f);
+                    tiempoHijo *= Random.Range(0.8f, 1.2f);
                     break;
                 case 2:
-                    movimientoNuevoHijo.vidaMaxima *= Random.Range(0.8f, 1.2f);
+                    vidaHijo *= Random.Range(0.8f, 1.2f);
                     break;
             }
+
+            // Asignar las características al nuevo hijo
+            movimientoNuevoHijo.velocidadMaxima = velocidadHijo;
+            movimientoNuevoHijo.tiempoDeVida = tiempoHijo;
+            movimientoNuevoHijo.vidaMaxima = vidaHijo;
 
             // Desactiva la capacidad de reproducción de ambos padres para evitar más reproducciones
             puedeReproducirse = false;

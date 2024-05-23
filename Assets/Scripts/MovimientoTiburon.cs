@@ -34,7 +34,7 @@ public class MovimientoTiburon : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f; // Inicializa el tiempo desde la última reproducción
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(60f, 80f);
+        tiempoDeVida = Random.Range(80f, 100f);
         velocidadMaxima = Random.Range(20f, 35f);
         segundosRestantesDeVida = tiempoDeVida;
 
@@ -51,18 +51,15 @@ public class MovimientoTiburon : MonoBehaviour
 
             if (segundosRestantesDeVida > 60)
             {
-                if (tiempoDesdeUltimaReproduccion >= 10f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 15f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
+                    puedeReproducirse = true;
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 60 && segundosRestantesDeVida > 0)
-            {
-                // Cambia el objetivo a la posición de un objeto con etiqueta objetivo
-                CambiarObjetivoAleatorio();
-            }
+           
             else if (segundosRestantesDeVida > 0)
             {
                 if (segundosRestantesDeVida < 60)
@@ -131,7 +128,7 @@ public class MovimientoTiburon : MonoBehaviour
         {
             if (other.CompareTag(etiquetaObjetivo))
             {
-                MovimientoOrca orcaScript = other.GetComponent<MovimientoOrca>();
+                
                 vidaActual += Random.Range(5, 11);
                 segundosRestantesDeVida += Random.Range(15f, 20f);
                 Destroy(other.gameObject);
@@ -157,19 +154,6 @@ public class MovimientoTiburon : MonoBehaviour
         objetivoPosicion = objetivoAleatorio.transform.position;
     }
 
-    void CambiarObjetivoAleatorio()
-    {
-        GameObject[] objetivos = GameObject.FindGameObjectsWithTag(etiquetasObjetivo[Random.Range(0, etiquetasObjetivo.Length)]);
-
-        if (objetivos.Length == 0)
-        {
-            Debug.Log("No se encontraron objetivos.");
-            return;
-        }
-
-        GameObject objetivoAleatorio = objetivos[Random.Range(0, objetivos.Length)];
-        objetivoPosicion = objetivoAleatorio.transform.position;
-    }
 
     void MoverHaciaObjetivo()
     {
@@ -220,27 +204,29 @@ public class MovimientoTiburon : MonoBehaviour
             // Obtén el componente MovimientoTiburon del nuevo hijo
             MovimientoTiburon movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoTiburon>();
 
-            // Heredar características de los padres y aplicar mutación
-            movimientoNuevoHijo.velocidadMaxima = Random.Range(Mathf.Min(velocidadMaxima, pareja.GetComponent<MovimientoTiburon>().velocidadMaxima),
-                                                                Mathf.Max(velocidadMaxima, pareja.GetComponent<MovimientoTiburon>().velocidadMaxima));
-            movimientoNuevoHijo.tiempoDeVida = Random.Range(Mathf.Min(tiempoDeVida, pareja.GetComponent<MovimientoTiburon>().tiempoDeVida),
-                                                              Mathf.Max(tiempoDeVida, pareja.GetComponent<MovimientoTiburon>().tiempoDeVida));
-            movimientoNuevoHijo.vidaMaxima = Random.Range(Mathf.Min(vidaMaxima, pareja.GetComponent<MovimientoTiburon>().vidaMaxima),
-                                                           Mathf.Max(vidaMaxima, pareja.GetComponent<MovimientoTiburon>().vidaMaxima));
+            // Heredar características de los padres
+            float velocidadHijo = (velocidadMaxima + pareja.GetComponent<MovimientoTiburon>().velocidadMaxima) / 2f;
+            float tiempoHijo = (tiempoDeVida + pareja.GetComponent<MovimientoTiburon>().tiempoDeVida) / 2f;
+            float vidaHijo = (vidaMaxima + pareja.GetComponent<MovimientoTiburon>().vidaMaxima) / 2f;
 
             // Aplicar mutación a una característica aleatoria
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    movimientoNuevoHijo.velocidadMaxima *= Random.Range(0.8f, 1.2f);
+                    velocidadHijo *= Random.Range(0.8f, 1.2f);
                     break;
                 case 1:
-                    movimientoNuevoHijo.tiempoDeVida *= Random.Range(0.8f, 1.2f);
+                    tiempoHijo *= Random.Range(0.8f, 1.2f);
                     break;
                 case 2:
-                    movimientoNuevoHijo.vidaMaxima *= Random.Range(0.8f, 1.2f);
+                    vidaHijo *= Random.Range(0.8f, 1.2f);
                     break;
             }
+
+            // Asignar las características al nuevo hijo
+            movimientoNuevoHijo.velocidadMaxima = velocidadHijo;
+            movimientoNuevoHijo.tiempoDeVida = tiempoHijo;
+            movimientoNuevoHijo.vidaMaxima = vidaHijo;
 
             // Desactiva la capacidad de reproducción de ambos padres para evitar más reproducciones
             puedeReproducirse = false;
@@ -250,5 +236,6 @@ public class MovimientoTiburon : MonoBehaviour
             // Mensaje de depuración
             Debug.Log("Reproducción exitosa entre " + gameObject.name + " y " + pareja.name + ". Nuevo hijo creado con características heredadas y mutación.");
         }
+
     }
 }

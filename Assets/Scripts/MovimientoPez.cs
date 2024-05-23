@@ -50,18 +50,15 @@ public class MovimientoPez : MonoBehaviour
 
             if (segundosRestantesDeVida > 45)
             {
-                if (tiempoDesdeUltimaReproduccion >= 4f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 5f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
+                    puedeReproducirse = true;
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 40 && segundosRestantesDeVida > 0)
-            {
-                // Cambia el objetivo a la posición de un objeto "Shrimp"
-                CambiarObjetivoAShrimp();
-            }
+            
             else if (segundosRestantesDeVida > 0)
             {
                 if (segundosRestantesDeVida < 40)
@@ -127,7 +124,7 @@ public class MovimientoPez : MonoBehaviour
     {
         if (other.CompareTag(etiquetaObjetivo))
         {
-            MovimientoPez shrimpScript = other.GetComponent<MovimientoPez>();
+            
             vidaActual += Random.Range(5, 11);
             segundosRestantesDeVida += Random.Range(25f, 30f);
             Destroy(other.gameObject);
@@ -170,19 +167,6 @@ public class MovimientoPez : MonoBehaviour
         }
     }
 
-    void CambiarObjetivoAShrimp()
-    {
-        GameObject[] shrimps = GameObject.FindGameObjectsWithTag(etiquetaObjetivo);
-
-        if (shrimps.Length == 0)
-        {
-            Debug.Log("No se encontraron shrimps.");
-            return;
-        }
-
-        GameObject shrimpAleatorio = shrimps[Random.Range(0, shrimps.Length)];
-        objetivoPosicion = shrimpAleatorio.transform.position;
-    }
 
     void MoverHaciaObjetivo()
     {
@@ -233,27 +217,29 @@ public class MovimientoPez : MonoBehaviour
             // Obtén el componente MovimientoPez del nuevo hijo
             MovimientoPez movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoPez>();
 
-            // Heredar características de los padres y aplicar mutación
-            movimientoNuevoHijo.velocidadMaxima = Random.Range(Mathf.Min(velocidadMaxima, pareja.GetComponent<MovimientoPez>().velocidadMaxima),
-                                                                Mathf.Max(velocidadMaxima, pareja.GetComponent<MovimientoPez>().velocidadMaxima));
-            movimientoNuevoHijo.tiempoDeVida = Random.Range(Mathf.Min(tiempoDeVida, pareja.GetComponent<MovimientoPez>().tiempoDeVida),
-                                                              Mathf.Max(tiempoDeVida, pareja.GetComponent<MovimientoPez>().tiempoDeVida));
-            movimientoNuevoHijo.vidaMaxima = Random.Range(Mathf.Min(vidaMaxima, pareja.GetComponent<MovimientoPez>().vidaMaxima),
-                                                           Mathf.Max(vidaMaxima, pareja.GetComponent<MovimientoPez>().vidaMaxima));
+            // Heredar características de los padres
+            float velocidadHijo = (velocidadMaxima + pareja.GetComponent<MovimientoPez>().velocidadMaxima) / 2f;
+            float tiempoHijo = (tiempoDeVida + pareja.GetComponent<MovimientoPez>().tiempoDeVida) / 2f;
+            float vidaHijo = (vidaMaxima + pareja.GetComponent<MovimientoPez>().vidaMaxima) / 2f;
 
             // Aplicar mutación a una característica aleatoria
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    movimientoNuevoHijo.velocidadMaxima *= Random.Range(0.8f, 1.2f);
+                    velocidadHijo *= Random.Range(0.8f, 1.2f);
                     break;
                 case 1:
-                    movimientoNuevoHijo.tiempoDeVida *= Random.Range(0.8f, 1.2f);
+                    tiempoHijo *= Random.Range(0.8f, 1.2f);
                     break;
                 case 2:
-                    movimientoNuevoHijo.vidaMaxima *= Random.Range(0.8f, 1.2f);
+                    vidaHijo *= Random.Range(0.8f, 1.2f);
                     break;
             }
+
+            // Asignar las características al nuevo hijo
+            movimientoNuevoHijo.velocidadMaxima = velocidadHijo;
+            movimientoNuevoHijo.tiempoDeVida = tiempoHijo;
+            movimientoNuevoHijo.vidaMaxima = vidaHijo;
 
             // Desactiva la capacidad de reproducción de ambos padres para evitar más reproducciones
             puedeReproducirse = false;
@@ -263,5 +249,6 @@ public class MovimientoPez : MonoBehaviour
             // Mensaje de depuración
             Debug.Log("Reproducción exitosa entre " + gameObject.name + " y " + pareja.name + ". Nuevo hijo creado con características heredadas y mutación.");
         }
+
     }
 }

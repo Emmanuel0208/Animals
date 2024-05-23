@@ -34,8 +34,8 @@ public class MovimientoCamaron : MonoBehaviour
         tiempoDesdeUltimaReproduccion = 0f;
         vidaMaxima = Random.Range(2, 51);
         vidaActual = vidaMaxima;
-        tiempoDeVida = Random.Range(30f, 50f);
-        velocidadMaxima = Random.Range(2f, 20f);
+        tiempoDeVida = Random.Range(30f, 60f);
+        velocidadMaxima = Random.Range(10f, 20f);
         segundosRestantesDeVida = tiempoDeVida;
 
         InvokeRepeating("CambiarDireccion", 0f, cambioDeDireccionIntervalo);
@@ -51,18 +51,14 @@ public class MovimientoCamaron : MonoBehaviour
 
             if (segundosRestantesDeVida > 35)
             {
-                if (tiempoDesdeUltimaReproduccion >= 2f)
+                if (tiempoDesdeUltimaReproduccion >= 8f)
                 {
+                    puedeReproducirse = true;
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f;
                 }
             }
 
-            if (segundosRestantesDeVida <= 30 && segundosRestantesDeVida > 0)
-            {
-                // Cambia el objetivo a la posición de un objeto "Algae"
-                CambiarObjetivoAAlgae();
-            }
             else if (segundosRestantesDeVida > 0)
             {
                 if (segundosRestantesDeVida < 30)
@@ -124,7 +120,7 @@ public class MovimientoCamaron : MonoBehaviour
     {
         if (other.CompareTag(etiquetaObjetivo))
         {
-            MovimientoCamaron algaeScript = other.GetComponent<MovimientoCamaron>(); // Cambiado a "MovimientoCamaron"
+            
             vidaActual += Random.Range(5, 11);
             segundosRestantesDeVida += Random.Range(30f, 35f);
             Destroy(other.gameObject);
@@ -166,19 +162,7 @@ public class MovimientoCamaron : MonoBehaviour
         }
     }
 
-    void CambiarObjetivoAAlgae() // Cambiado a "CambiarObjetivoAAlgae"
-    {
-        GameObject[] algae = GameObject.FindGameObjectsWithTag(etiquetaObjetivo);
-
-        if (algae.Length == 0)
-        {
-            Debug.Log("No se encontraron algas.");
-            return;
-        }
-
-        GameObject algaeAleatorio = algae[Random.Range(0, algae.Length)];
-        objetivoPosicion = algaeAleatorio.transform.position;
-    }
+    
 
     void MoverHaciaObjetivo()
     {
@@ -214,37 +198,54 @@ public class MovimientoCamaron : MonoBehaviour
 
         if (pareja != null)
         {
-            Vector3 posicionNueva = (transform.position + pareja.transform.position) / 2f;
 
-            GameObject nuevoHijo = Instantiate(nuevoHijoPrefab, posicionNueva, Quaternion.identity);
-            MovimientoCamaron movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoCamaron>(); // Cambiado a "MovimientoCamaron"
+            // Obtener las características de los padres
+            float velocidadPadre = velocidadMaxima;
+            float tiempoPadre = tiempoDeVida;
+            float vidaPadre = vidaMaxima;
 
-            movimientoNuevoHijo.velocidadMaxima = Random.Range(Mathf.Min(velocidadMaxima, pareja.GetComponent<MovimientoCamaron>().velocidadMaxima), // Cambiado a "MovimientoCamaron"
-                                                                Mathf.Max(velocidadMaxima, pareja.GetComponent<MovimientoCamaron>().velocidadMaxima));
-            movimientoNuevoHijo.tiempoDeVida = Random.Range(Mathf.Min(tiempoDeVida, pareja.GetComponent<MovimientoCamaron>().tiempoDeVida), // Cambiado a "MovimientoCamaron"
-                                                              Mathf.Max(tiempoDeVida, pareja.GetComponent<MovimientoCamaron>().tiempoDeVida));
-            movimientoNuevoHijo.vidaMaxima = Random.Range(Mathf.Min(vidaMaxima, pareja.GetComponent<MovimientoCamaron>().vidaMaxima), // Cambiado a "MovimientoCamaron"
-                                                           Mathf.Max(vidaMaxima, pareja.GetComponent<MovimientoCamaron>().vidaMaxima));
+            float velocidadMadre = pareja.GetComponent<MovimientoCamaron>().velocidadMaxima;
+            float tiempoMadre = pareja.GetComponent<MovimientoCamaron>().tiempoDeVida;
+            float vidaMadre = pareja.GetComponent<MovimientoCamaron>().vidaMaxima;
 
-            switch (Random.Range(0, 3))
+            // Calcular las características del hijo (mitad de cada padre)
+            float nuevaVelocidadMaxima = (velocidadPadre + velocidadMadre) / 2f;
+            float nuevoTiempoDeVida = (tiempoPadre + tiempoMadre) / 2f;
+            float nuevaVidaMaxima = (vidaPadre + vidaMadre) / 2f;
+
+            // Modificar aleatoriamente una de las características del hijo
+            int indiceCaracteristicaAleatoria = Random.Range(0, 3);
+            switch (indiceCaracteristicaAleatoria)
             {
                 case 0:
-                    movimientoNuevoHijo.velocidadMaxima *= Random.Range(0.8f, 1.2f);
+                    nuevaVelocidadMaxima *= Random.Range(0.8f, 1.2f);
                     break;
                 case 1:
-                    movimientoNuevoHijo.tiempoDeVida *= Random.Range(0.8f, 1.2f);
+                    nuevoTiempoDeVida *= Random.Range(0.8f, 1.2f);
                     break;
                 case 2:
-                    movimientoNuevoHijo.vidaMaxima *= Random.Range(0.8f, 1.2f);
+                    nuevaVidaMaxima *= Random.Range(0.8f, 1.2f);
                     break;
             }
 
+            // Crear el nuevo hijo
+            Vector3 posicionNueva = (transform.position + pareja.transform.position) / 2f;
+            GameObject nuevoHijo = Instantiate(nuevoHijoPrefab, posicionNueva, Quaternion.identity);
+            MovimientoCamaron movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoCamaron>();
+
+            // Asignar las estadísticas heredadas al nuevo hijo
+            movimientoNuevoHijo.velocidadMaxima = nuevaVelocidadMaxima;
+            movimientoNuevoHijo.tiempoDeVida = nuevoTiempoDeVida;
+            movimientoNuevoHijo.vidaMaxima = nuevaVidaMaxima;
+
+            // Desactivar la capacidad de reproducción de los padres
             puedeReproducirse = false;
-            MovimientoCamaron movimientoPareja = pareja.GetComponent<MovimientoCamaron>(); // Cambiado a "MovimientoCamaron"
+            MovimientoCamaron movimientoPareja = pareja.GetComponent<MovimientoCamaron>();
             movimientoPareja.puedeReproducirse = false;
 
-            Debug.Log("Reproducción exitosa entre " + gameObject.name + " y " + pareja.name + ". Nuevo hijo creado con características heredadas y mutación.");
+            Debug.Log("Reproducción exitosa entre " + gameObject.name + " y " + pareja.name + ". Nuevo hijo creado con características heredadas y una modificación aleatoria.");
         }
+
     }
 }
 

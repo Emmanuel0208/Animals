@@ -51,18 +51,15 @@ public class MovimientoAleatorio : MonoBehaviour
 
             if (segundosRestantesDeVida > 65)
             {
-                if (tiempoDesdeUltimaReproduccion >= 8f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
+                if (tiempoDesdeUltimaReproduccion >= 5f) // Verifica si ha pasado al menos 10 segundos desde la última reproducción
                 {
+                    puedeReproducirse = true;
                     Reproducirse();
                     tiempoDesdeUltimaReproduccion = 0f; // Reinicia el tiempo desde la última reproducción
                 }
             }
 
-            if (segundosRestantesDeVida <= 60 && segundosRestantesDeVida > 0)
-            {
-                // Cambia el objetivo a la posición de un objeto "Shrimp"
-                CambiarObjetivoAShrimp();
-            }
+            
             else if (segundosRestantesDeVida > 0)
             {
                 if (segundosRestantesDeVida < 60)
@@ -128,7 +125,7 @@ public class MovimientoAleatorio : MonoBehaviour
     {
         if (other.CompareTag(etiquetaObjetivo))
         {
-            MovimientoAleatorio shrimpScript = other.GetComponent<MovimientoAleatorio>();
+            
             vidaActual += Random.Range(5, 11);
             segundosRestantesDeVida += Random.Range(15f, 20f);
             Destroy(other.gameObject);
@@ -171,19 +168,6 @@ public class MovimientoAleatorio : MonoBehaviour
         }
     }
 
-    void CambiarObjetivoAShrimp()
-    {
-        GameObject[] shrimps = GameObject.FindGameObjectsWithTag(etiquetaObjetivo);
-
-        if (shrimps.Length == 0)
-        {
-            Debug.Log("No se encontraron shrimps.");
-            return;
-        }
-
-        GameObject shrimpAleatorio = shrimps[Random.Range(0, shrimps.Length)];
-        objetivoPosicion = shrimpAleatorio.transform.position;
-    }
 
     void MoverHaciaObjetivo()
     {
@@ -234,27 +218,37 @@ public class MovimientoAleatorio : MonoBehaviour
             // Obtén el componente MovimientoAleatorio del nuevo hijo
             MovimientoAleatorio movimientoNuevoHijo = nuevoHijo.GetComponent<MovimientoAleatorio>();
 
-            // Heredar características de los padres y aplicar mutación
-            movimientoNuevoHijo.velocidadMaxima = Random.Range(Mathf.Min(velocidadMaxima, pareja.GetComponent<MovimientoAleatorio>().velocidadMaxima),
-                                                                Mathf.Max(velocidadMaxima, pareja.GetComponent<MovimientoAleatorio>().velocidadMaxima));
-            movimientoNuevoHijo.tiempoDeVida = Random.Range(Mathf.Min(tiempoDeVida, pareja.GetComponent<MovimientoAleatorio>().tiempoDeVida),
-                                                              Mathf.Max(tiempoDeVida, pareja.GetComponent<MovimientoAleatorio>().tiempoDeVida));
-            movimientoNuevoHijo.vidaMaxima = Random.Range(Mathf.Min(vidaMaxima, pareja.GetComponent<MovimientoAleatorio>().vidaMaxima),
-                                                           Mathf.Max(vidaMaxima, pareja.GetComponent<MovimientoAleatorio>().vidaMaxima));
+            // Heredar características de los padres
+            float velocidadPadre = velocidadMaxima;
+            float tiempoPadre = tiempoDeVida;
+            float vidaPadre = vidaMaxima;
+
+            float velocidadMadre = pareja.GetComponent<MovimientoAleatorio>().velocidadMaxima;
+            float tiempoMadre = pareja.GetComponent<MovimientoAleatorio>().tiempoDeVida;
+            float vidaMadre = pareja.GetComponent<MovimientoAleatorio>().vidaMaxima;
+
+            float nuevaVelocidadMaxima = (velocidadPadre + velocidadMadre) / 2f;
+            float nuevoTiempoDeVida = (tiempoPadre + tiempoMadre) / 2f;
+            float nuevaVidaMaxima = (vidaPadre + vidaMadre) / 2f;
 
             // Aplicar mutación a una característica aleatoria
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    movimientoNuevoHijo.velocidadMaxima *= Random.Range(0.8f, 1.2f);
+                    nuevaVelocidadMaxima *= Random.Range(0.8f, 1.2f);
                     break;
                 case 1:
-                    movimientoNuevoHijo.tiempoDeVida *= Random.Range(0.8f, 1.2f);
+                    nuevoTiempoDeVida *= Random.Range(0.8f, 1.2f);
                     break;
                 case 2:
-                    movimientoNuevoHijo.vidaMaxima *= Random.Range(0.8f, 1.2f);
+                    nuevaVidaMaxima *= Random.Range(0.8f, 1.2f);
                     break;
             }
+
+            // Asignar las características al nuevo hijo
+            movimientoNuevoHijo.velocidadMaxima = nuevaVelocidadMaxima;
+            movimientoNuevoHijo.tiempoDeVida = nuevoTiempoDeVida;
+            movimientoNuevoHijo.vidaMaxima = nuevaVidaMaxima;
 
             // Desactiva la capacidad de reproducción de ambos padres para evitar más reproducciones
             puedeReproducirse = false;
@@ -264,5 +258,6 @@ public class MovimientoAleatorio : MonoBehaviour
             // Mensaje de depuración
             Debug.Log("Reproducción exitosa entre " + gameObject.name + " y " + pareja.name + ". Nuevo hijo creado con características heredadas y mutación.");
         }
+
     }
 }
